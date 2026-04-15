@@ -2,78 +2,56 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>LICENSE.MD</title>
+    <!-- Подключаем официальные стили GitHub для Markdown -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.5.1/github-markdown.min.css">
+    <!-- Подключаем библиотеку Showdown для преобразования Markdown в HTML -->
+    <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
     <style>
-        body {
-            margin: 40px auto;
-            max-width: 900px;
-            padding: 0 20px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-            line-height: 1.6;
+        /* Стили для контейнера — в точности как на GitHub */
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
         }
-        pre, code {
-            background-color: #f6f8fa;
-            border-radius: 3px;
-            padding: 0.2em 0.4em;
-        }
-        pre {
-            padding: 16px;
-            overflow: auto;
-        }
-        blockquote {
-            border-left: 4px solid #ddd;
-            margin: 0;
-            padding-left: 16px;
-            color: #555;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+        /* На мобильных устройствах отступы меньше */
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
         }
     </style>
 </head>
-<body>
+<body class="markdown-body">
     <div id="content"></div>
 
     <script>
+        // Загружаем ваш файл LICENSE.MD
         fetch('LICENSE.MD')
             .then(response => {
                 if (!response.ok) throw new Error('Файл LICENSE.MD не найден');
                 return response.text();
             })
             .then(markdown => {
-                // Простейшее преобразование Markdown в HTML
-                let html = markdown
-                    .replace(/&/g, '&amp;')
-                    .replace(/</g, '&lt;')
-                    .replace(/>/g, '&gt;')
-                    // Заголовки
-                    .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-                    .replace(/^## (.*$)/gm, '<h2>$2</h2>')
-                    .replace(/^### (.*$)/gm, '<h3>$3</h3>')
-                    // Жирный и курсив
-                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                    // Ссылки
-                    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>')
-                    // Списки
-                    .replace(/^\* (.*$)/gm, '<ul><li>$1</li></ul>')
-                    .replace(/^\d+\. (.*$)/gm, '<ol><li>$1</li></ol>')
-                    // Код
-                    .replace(/`(.*?)`/g, '<code>$1</code>')
-                    .replace(/```(.*?)```/gs, '<pre><code>$1</code></pre>');
-                
-                // Упрощаем вложенные списки (базово)
-                html = html.replace(/<\/ul>\s*<ul>/g, '');
-                html = html.replace(/<\/ol>\s*<ol>/g, '');
-                
+                // Настраиваем Showdown для поддержки расширенного синтаксиса GitHub
+                const converter = new showdown.Converter({
+                    tables: true,           // поддержка таблиц
+                    strikethrough: true,    // зачёркнутый текст
+                    emoji: true,            // эмодзи :)
+                    tasklists: true,        // чек-листы
+                    simplifiedAutoLink: true // автоматические ссылки
+                });
+                // Преобразуем Markdown в HTML
+                const html = converter.makeHtml(markdown);
+                // Вставляем результат на страницу
                 document.getElementById('content').innerHTML = html;
             })
             .catch(error => {
-                document.getElementById('content').innerHTML = '<p style="color:red;">Ошибка: файл LICENSE.MD не загружен. Убедитесь, что он есть в корне репозитория.</p>';
+                document.getElementById('content').innerHTML = '<p style="color:red;">⚠️ Ошибка: файл LICENSE.MD не загружен. Убедитесь, что он есть в корне репозитория.</p>';
+                console.error('Ошибка загрузки:', error);
             });
     </script>
 </body>
