@@ -6,13 +6,13 @@
 
     <script>
 
-        fetch('LICENSE.md')
+        fetch('LICENSE.MD')
             .then(response => {
-                if (!response.ok) throw new Error('Не удалось загрузить LICENSE.md');
+                if (!response.ok) throw new Error('Не удалось загрузить LICENSE.MD');
                 return response.text();
             })
             .then(markdown => {
-                // Простой способ конвертировать Markdown в HTML для отображения
+
                 const htmlContent = markdown
                     .replace(/&/g, '&amp;')
                     .replace(/</g, '&lt;')
