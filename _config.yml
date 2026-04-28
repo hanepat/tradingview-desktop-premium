@@ -3,3 +3,4 @@ baseurl: "/tradingview-desktop-premium"
 
 plugins:
   - jekyll-sitemap
+ 
